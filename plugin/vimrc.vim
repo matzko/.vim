@@ -2,6 +2,12 @@ set nu
 set ai
 set ignorecase
 set hlsearch
+" use spaces for tabs
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+
 syntax on
 set foldmethod=indent
 set diffopt+=iwhite
