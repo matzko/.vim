@@ -4,6 +4,16 @@ curdir=`pwd`
 filedir="$1";
 filebase=`basename "$1"`;
 
+# Use the repo's main directory name if the current directory is "trunk"
+if [ 'trunk' = $filebase ] 
+	then
+	filebase=`dirname $1`;
+	filebase=`basename $filebase`;
+fi
+
+echo "Generating tags for $filedir as \"$filebase\".";
+echo "";
+
 cd $filedir;
 
 exec ctags-exuberant -f ~/.vim/ctags/mytags/$filebase \
