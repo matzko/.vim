@@ -9,6 +9,13 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 
+" omnicomplete
+filetype plugin on
+set ofu=syntaxcomplete#Complete
+" choose omnicomplete option with jk keys instead of <C-n> and <C-p>
+inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
+inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
+
 
 syntax on
 set foldmethod=indent
