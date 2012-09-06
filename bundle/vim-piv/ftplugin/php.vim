@@ -50,7 +50,7 @@ call s:InitVariable("g:PIVCreateDefaultMappings", 1)
 call s:InitVariable("g:PIVPearStyle", 0)
 
 " Auto expand tabs to spaces
-setlocal expandtab
+" setlocal expandtab
 
 setlocal autoindent " Auto indent after a {
 setlocal smartindent
