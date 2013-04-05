@@ -20,7 +20,7 @@ inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
 inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
 
 let g:checksyntax_auto=0
-let g:syntastic_phpcs_conf = " --tab-width=4"
+let g:syntastic_phpcs_conf = " --tab-width=4 --standard=PEARish"
 
 " map double "m" to refresh syntax highlighting
 nmap mm :syn sync fromstart<CR>
