@@ -29,6 +29,11 @@ let g:syntastic_php_phpcs_args = " --tab-width=4 --standard=PEARish"
 " map double "m" to refresh syntax highlighting
 nmap mm :syn sync fromstart<CR>
 
+" Delete unused fugitive buffers so they don't pollute the buffer list 
+autocmd BufReadPost fugitive://* set bufhidden=delete
+
+" use fugitive to show the current branch in the status line
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 syntax on
 set foldmethod=indent
