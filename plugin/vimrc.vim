@@ -7,7 +7,7 @@ set hlsearch
 set noexpandtab
 " set the width that tabs appear to be
 set tabstop=2
-set shiftwidth=4
+set shiftwidth=2
 set listchars=tab:·\ ,eol:˺
 set list
 " use spaces for tabs
