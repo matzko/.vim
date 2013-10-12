@@ -1,20 +1,32 @@
-" TODO: support loading color palette from g:airline_theme
+" MIT license. Copyright (c) 2013 Bailey Ling.
+" vim: ts=2 sts=2 sw=2 fdm=indent
 
-function! airline#extensions#ctrlp#load_ctrlp_hi()
-  hi! CtrlPdark ctermfg=189 ctermbg=55 guifg=#d7d7ff guibg=#5f00af
-  hi! CtrlPlight ctermfg=231 ctermbg=98 guifg=#ffffff guibg=#875fd7
-  hi! CtrlPwhite ctermfg=55 ctermbg=231 term=bold guifg=#5f00af guibg=#ffffff gui=bold
-  hi! CtrlParrow1 ctermfg=98 ctermbg=231 guifg=#875fd7 guibg=#ffffff
-  hi! CtrlParrow2 ctermfg=231 ctermbg=98 guifg=#ffffff guibg=#875fd7
-  hi! CtrlParrow3 ctermfg=98 ctermbg=55 guifg=#875fd7 guibg=#5f00af
-  hi! CtrlParrow4 ctermfg=231 ctermbg=55 guifg=#ffffff guibg=#5f00af
-  hi! CtrlParrow5 ctermfg=98 ctermbg=231 guifg=#875fd7 guibg=#ffffff
+function! airline#extensions#ctrlp#generate_color_map(dark, light, white)
+  return {
+        \ 'CtrlPdark'   : a:dark,
+        \ 'CtrlPlight'  : a:light,
+        \ 'CtrlPwhite'  : a:white,
+        \ 'CtrlParrow1' : [ a:light[1] , a:white[1] , a:light[3] , a:white[3] , ''     ] ,
+        \ 'CtrlParrow2' : [ a:white[1] , a:light[1] , a:white[3] , a:light[3] , ''     ] ,
+        \ 'CtrlParrow3' : [ a:light[1] , a:dark[1]  , a:light[3] , a:dark[3]  , ''     ] ,
+        \ }
 endfunction
 
-" Recreate Ctrl-P status line with some slight modifications
+function! airline#extensions#ctrlp#load_theme()
+  if exists('g:airline#themes#{g:airline_theme}#ctrlp')
+    let theme = g:airline#themes#{g:airline_theme}#ctrlp
+  else
+    let theme = airline#extensions#ctrlp#generate_color_map(
+          \ g:airline#themes#{g:airline_theme}#insert['statusline'],
+          \ g:airline#themes#{g:airline_theme}#insert['info'],
+          \ g:airline#themes#{g:airline_theme}#insert['mode'])
+  endif
+  for key in keys(theme)
+    call airline#exec_highlight(key, theme[key])
+  endfor
+endfunction
 
 " Arguments: focus, byfname, s:regexp, prv, item, nxt, marked
-" a:1 a:2 a:3 a:4 a:5 a:6 a:7
 function! airline#extensions#ctrlp#ctrlp_airline(...)
   let regex = a:3 ? '%#CtrlPlight#  regex %*' : ''
   let prv = '%#CtrlPlight# '.a:4.' %#Ctrlparrow1#'.g:airline_left_sep
@@ -22,17 +34,26 @@ function! airline#extensions#ctrlp#ctrlp_airline(...)
   let nxt = '%#CtrlPlight# '.a:6.' %#CtrlParrow3#'.g:airline_left_sep
   let marked = '%#CtrlPdark# '.a:7.' '
   let focus = '%=%<%#CtrlPdark# '.a:1.' %*'
-  let byfname = '%#CtrlParrow4#'.g:airline_right_alt_sep.'%#CtrlPdark# '.a:2.' %*'
+  let byfname = '%#CtrlParrow3#'.g:airline_right_alt_sep.'%#CtrlPdark# '.a:2.' %*'
   let dir = '%#CtrlParrow3#'.g:airline_right_sep.'%#CtrlPlight# '.getcwd().' %*'
-  " Return the full statusline
   return regex.prv.item.nxt.marked.focus.byfname.dir
 endfunction
 
 " Argument: len
-" a:1
 function! airline#extensions#ctrlp#ctrlp_airline_status(...)
-  let len = '%#CtrlPwhite# '.a:1
-  let dir = '%=%<%#CtrlParrow5#'.g:airline_right_sep.'%#CtrlPlight# '.getcwd().' %*'
-  " Return the full statusline
+  let len = '%#CtrlPdark# '.a:1
+  let dir = '%=%<%#CtrlParrow3#'.g:airline_right_sep.'%#CtrlPlight# '.getcwd().' %*'
   return len.dir
+endfunction
+
+function! airline#extensions#ctrlp#is_statusline_overwritten()
+  return match(&statusline, 'CtrlPlight') >= 0
+endfunction
+
+function! airline#extensions#ctrlp#init(ext)
+  let g:ctrlp_status_func = {
+        \ 'main': 'airline#extensions#ctrlp#ctrlp_airline',
+        \ 'prog': 'airline#extensions#ctrlp#ctrlp_airline_status',
+        \ }
+  call a:ext.add_cursormove_funcref(function('airline#extensions#ctrlp#is_statusline_overwritten'))
 endfunction
