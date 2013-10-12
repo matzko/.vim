@@ -4,4 +4,4 @@
 	~/.vim/plugin/vimrc.vim
 
  * Put in ~/.vimrc :
-    runtime plugin/vimrc.vim
+		source ~/.vim/plugin/vimrc.vim
