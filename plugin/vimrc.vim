@@ -52,3 +52,11 @@ let Tlist_GainFocus_On_ToggleOpen = 1
 let Tlist_WinWidth = 40
 " close tlist when a selection is made
 let Tlist_Close_On_Select = 1
+
+:let mapleader=","
+
+" set key mappings for vim-rspec
+map <Leader>t :call RunCurrentSpecFile()<CR>
+map <Leader>s :call RunNearestSpec()<CR>
+map <Leader>l :call RunLastSpec()<CR>
+map <Leader>a :call RunAllSpecs()<CR>
