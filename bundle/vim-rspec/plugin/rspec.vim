@@ -1,55 +1,106 @@
 let s:plugin_path = expand("<sfile>:p:h:h")
+let s:default_command = "rspec {spec}"
+let s:force_gui = 0
 
-if !exists("g:rspec_command")
-  let s:cmd = "rspec {spec}"
-
-  if has("gui_running") && has("gui_macvim")
-    let g:rspec_command = "silent !" . s:plugin_path . "/bin/run_in_os_x_terminal '" . s:cmd . "'"
-  else
-    let g:rspec_command = "!echo " . s:cmd . " && " . s:cmd
-  endif
+if !exists("g:rspec_runner")
+  let g:rspec_runner = "os_x_terminal"
 endif
 
 function! RunAllSpecs()
-  let l:spec = "spec"
-  call SetLastSpecCommand(l:spec)
-  call RunSpecs(l:spec)
+  let s:last_spec_location = "spec"
+  call s:RunSpecs(s:last_spec_location)
 endfunction
 
 function! RunCurrentSpecFile()
-  if InSpecFile()
-    let l:spec = @%
-    call SetLastSpecCommand(l:spec)
-    call RunSpecs(l:spec)
+  if s:InSpecFile()
+    let s:last_spec_location = s:CurrentFilePath()
+    call s:RunSpecs(s:last_spec_location)
   else
     call RunLastSpec()
   endif
 endfunction
 
 function! RunNearestSpec()
-  if InSpecFile()
-    let l:spec = @% . ":" . line(".")
-    call SetLastSpecCommand(l:spec)
-    call RunSpecs(l:spec)
+  if s:InSpecFile()
+    let s:last_spec_location = s:CurrentFilePath() . ":" . line(".")
+    call s:RunSpecs(s:last_spec_location)
   else
     call RunLastSpec()
   endif
 endfunction
 
 function! RunLastSpec()
-  if exists("s:last_spec_command")
-    call RunSpecs(s:last_spec_command)
+  if exists("s:last_spec_location")
+    call s:RunSpecs(s:last_spec_location)
   endif
 endfunction
 
-function! InSpecFile()
-  return match(expand("%"), "_spec.rb$") != -1 || match(expand("%"), ".feature$") != -1
+" === local functions ===
+
+function! s:RunSpecs(spec_location)
+  let s:rspec_command = substitute(s:RspecCommand(), "{spec}", a:spec_location, "g")
+
+  execute s:rspec_command
 endfunction
 
-function! SetLastSpecCommand(spec)
-  let s:last_spec_command = a:spec
+function! s:InSpecFile()
+  return match(expand("%"), "_spec.rb$") != -1
 endfunction
 
-function! RunSpecs(spec)
-  execute substitute(g:rspec_command, "{spec}", a:spec, "g")
+function! s:RspecCommand()
+  if s:RspecCommandProvided() && s:IsMacGui()
+    let l:command = s:GuiCommand(g:rspec_command)
+  elseif s:RspecCommandProvided()
+    let l:command = g:rspec_command
+  elseif s:IsMacGui()
+    let l:command = s:GuiCommand(s:default_command)
+  else
+    let l:command = s:DefaultTerminalCommand()
+  endif
+
+  return l:command
 endfunction
+
+function! s:RspecCommandProvided()
+  return exists("g:rspec_command")
+endfunction
+
+function! s:DefaultTerminalCommand()
+  return "!" . s:ClearCommand() . " && echo " . s:default_command . " && " . s:default_command
+endfunction
+
+function! s:CurrentFilePath()
+  return @%
+endfunction
+
+function! s:GuiCommand(command)
+  return "silent !" . s:plugin_path . "/bin/" . g:rspec_runner . " '" . a:command . "'"
+endfunction
+
+function! s:ClearCommand()
+  if s:IsWindows()
+    return "cls"
+  else
+    return "clear"
+  endif
+endfunction
+
+function! s:IsMacGui()
+  return s:force_gui || (has("gui_running") && has("gui_macvim"))
+endfunction
+
+function! s:IsWindows()
+  return has("win32") && fnamemodify(&shell, ':t') ==? "cmd.exe"
+endfunction
+
+" begin vspec config
+function! rspec#scope()
+  return s:
+endfunction
+
+function! rspec#sid()
+    return maparg('<SID>', 'n')
+endfunction
+nnoremap <SID> <SID>
+" end vspec config
+
