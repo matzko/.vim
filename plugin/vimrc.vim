@@ -56,6 +56,7 @@ let Tlist_Close_On_Select = 1
 :let mapleader=","
 
 " set key mappings for vim-rspec
+let g:rspec_command  = "!zeus rspec --drb {spec}"
 map <Leader>t :call RunCurrentSpecFile()<CR>
 map <Leader>s :call RunNearestSpec()<CR>
 map <Leader>l :call RunLastSpec()<CR>
