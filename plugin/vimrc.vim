@@ -19,8 +19,18 @@ set list
 filetype plugin on
 set ofu=syntaxcomplete#Complete
 " choose omnicomplete option with jk keys instead of <C-n> and <C-p>
-inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
-inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
+" inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
+" inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
+
+" look in the current directory for a tags file
+" autocmd FileType ruby set tags=./.tags
+set tags+=.tags
+
+" use omni completion with Eclim
+let g:EclimCompletionMethod = 'omnifunc'
+
+" use ctags with ycm
+let g:ycm_collect_identifiers_from_tags_files = 1
 
 let g:checksyntax_auto=0
 " let g:syntastic_phpcs_conf = " --tab-width=4 --standard=PEARish"
