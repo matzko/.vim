@@ -4,7 +4,7 @@ set nu
 set ai
 set ignorecase
 set hlsearch
-set noexpandtab
+" set noexpandtab
 " set the width that tabs appear to be
 set tabstop=2
 set shiftwidth=2
@@ -13,7 +13,7 @@ set list
 " use spaces for tabs
 " set tabstop=4
 " set shiftwidth=4
-" set expandtab
+set expandtab
 
 " omnicomplete
 filetype plugin on
