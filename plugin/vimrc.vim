@@ -57,6 +57,11 @@ set t_Co=256
 colorscheme zenburn
 colors zenburn
 
+if &diff
+    " colorscheme evening
+    colorscheme jellybeans
+endif
+
 " set the names of flags
 let tlist_php_settings = 'php;c:class;f:function;d:constant'
 " close all folds except for current file
